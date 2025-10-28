@@ -1,52 +1,114 @@
-// packages/builder/src/context/NotificationContext.tsx
+// src/context/NotificationContext.tsx
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
-import { Notification } from '../components/Notification';
+import {
+    createContext,
+    useContext,
+    useState,
+    ReactNode,
+    useCallback,
+    useMemo,
+} from "react";
+import { Notification } from "../components/Notification";
 
-type NotificationType = 'success' | 'error';
+/**
+ * Types de notifications possibles
+ */
+export type NotificationType = "success" | "error";
 
+/**
+ * État interne d'une notification
+ */
 interface NotificationState {
-  message: string;
-  type: NotificationType;
-  isVisible: boolean;
+    message: string;
+    type: NotificationType;
+    isVisible: boolean;
 }
 
+/**
+ * Type du contexte de notification
+ */
 interface NotificationContextType {
-  showNotification: (message: string, type: NotificationType) => void;
+    showNotification: (message: string, type: NotificationType) => void;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+/**
+ * Props du provider de notification
+ */
+interface NotificationProviderProps {
+    children: ReactNode;
+}
 
-export const NotificationProvider = ({ children }: { children: ReactNode }) => {
-  const [notification, setNotification] = useState<NotificationState | null>(null);
+/**
+ * Contexte de notification partagé
+ */
+const NotificationContext = createContext<NotificationContextType | undefined>(
+    undefined,
+);
 
-  const showNotification = useCallback((message: string, type: NotificationType) => {
-    setNotification({ message, type, isVisible: true });
-  }, []);
+/**
+ * Provider du contexte de notification
+ * Affiche des notifications temporaires de succès ou d'erreur
+ */
+export const NotificationProvider = ({
+    children,
+}: NotificationProviderProps) => {
+    const [notification, setNotification] = useState<NotificationState | null>(
+        null,
+    );
 
-  const handleClose = () => {
-    setNotification(null);
-  };
+    /**
+     * Affiche une notification
+     * @param message - Message à afficher
+     * @param type - Type de notification (success ou error)
+     */
+    const showNotification = useCallback(
+        (message: string, type: NotificationType) => {
+            setNotification({ message, type, isVisible: true });
+        },
+        [],
+    );
 
-  return (
-    <NotificationContext.Provider value={{ showNotification }}>
-      {children}
-      {notification && (
-        <Notification
-          message={notification.message}
-          type={notification.type}
-          onClose={handleClose}
-        />
-      )}
-    </NotificationContext.Provider>
-  );
+    /**
+     * Ferme la notification active
+     */
+    const handleClose = useCallback(() => {
+        setNotification(null);
+    }, []);
+
+    /**
+     * Valeur mémorisée du contexte
+     */
+    const contextValue = useMemo(
+        () => ({ showNotification }),
+        [showNotification],
+    );
+
+    return (
+        <NotificationContext.Provider value={contextValue}>
+            {children}
+            {notification && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                    onClose={handleClose}
+                />
+            )}
+        </NotificationContext.Provider>
+    );
 };
 
-export const useNotification = () => {
-  const context = useContext(NotificationContext);
-  if (!context) {
-    throw new Error('useNotification must be used within a NotificationProvider');
-  }
-  return context;
+/**
+ * Hook pour accéder au contexte de notification
+ * @returns {NotificationContextType} Le contexte de notification
+ * @throws {Error} Si utilisé hors d'un NotificationProvider
+ */
+export const useNotification = (): NotificationContextType => {
+    const context = useContext(NotificationContext);
+    if (!context) {
+        throw new Error(
+            "useNotification must be used within a NotificationProvider",
+        );
+    }
+    return context;
 };

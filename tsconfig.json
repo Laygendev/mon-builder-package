@@ -1,19 +1,28 @@
 {
-  "compilerOptions": {
-    "target": "es2017",
-    "lib": ["dom", "esnext"],
-    "module": "commonjs",
-    "jsx": "react-jsx",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    
-    // Options pour la publication
-    "declaration": true,
-    "outDir": "dist",
-    "sourceMap": true
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+    "compilerOptions": {
+        "target": "es2017",
+        "lib": ["dom", "esnext"],
+        "module": "commonjs",
+        "jsx": "react-jsx",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+
+        // Options pour la publication
+        "declaration": true,
+        "declarationMap": true,
+        "outDir": "dist",
+        "sourceMap": true,
+
+        // Ignorer les types manquants des dépendances tierces
+        "skipDefaultLibCheck": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
 }

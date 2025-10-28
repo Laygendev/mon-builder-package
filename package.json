@@ -1,6 +1,6 @@
 {
   "name": "@laydevjim/mon-builder",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Une librairie de composants d'édition pour Next.js",
   "private": false,
   "main": "dist/index.js",
